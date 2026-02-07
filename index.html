@@ -1,0 +1,379 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rose Day + Propose Day</title>
+  <style>
+    :root{
+      --bg1:#ffe3e6; --bg2:#f3a6b2;
+      --card: rgba(255,255,255,.85);
+      --text:#1f1f1f;
+      --yes:#16a34a; --no:#dc2626;
+      --muted: rgba(0,0,0,.65);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      display:grid; place-items:center;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow:hidden; color:var(--text);
+    }
+
+    /* subtle floating icons */
+    .float {
+      position:absolute; bottom:-40px;
+      font-size:18px; opacity:.75;
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
+      user-select:none; pointer-events:none;
+    }
+    @keyframes floatUp{
+      to{ transform: translateY(-110vh) translateX(var(--drift)); opacity:0; }
+    }
+
+    .card{
+      width:min(620px, 92vw);
+      padding:28px 22px;
+      border-radius:18px;
+      background:var(--card);
+      backdrop-filter:blur(10px);
+      box-shadow:0 20px 60px rgba(0,0,0,.16);
+      border:1px solid rgba(255,255,255,.6);
+      text-align:center;
+      position:relative;
+    }
+
+    .top {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:6px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(0,0,0,.06);
+      font-weight:650;
+      font-size:14px;
+    }
+
+    h1{ margin:8px 0 8px; font-size:clamp(22px, 4vw, 30px); }
+    .sub{
+      margin:0 0 16px;
+      font-size:clamp(14px,2.8vw,16px);
+      line-height:1.55;
+      color:var(--muted);
+    }
+
+    .question{
+      margin:14px 0 16px;
+      font-size:clamp(18px, 3.2vw, 22px);
+      font-weight:800;
+    }
+
+    .stage{
+      width:min(520px, 100%);
+      margin:0 auto;
+      padding:14px 12px 16px;
+      border-radius:16px;
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(0,0,0,.06);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .btn-row{
+      position:relative;
+      height:70px;
+      margin-top:10px;
+    }
+
+    button{
+      border:0;
+      padding:12px 18px;
+      border-radius:999px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:16px;
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+      box-shadow:0 10px 20px rgba(0,0,0,.12);
+      user-select:none;
+    }
+    button:active{ transform:scale(.98); }
+
+    #yesBtn{
+      background:var(--yes);
+      color:#fff;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-120%, -50%);
+    }
+
+    #noBtn{
+      background:var(--no);
+      color:#fff;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(20%, -50%);
+      touch-action: manipulation;
+    }
+
+    .hint{
+      margin-top:10px;
+      font-size:13px;
+      color:rgba(0,0,0,.55);
+    }
+
+    .msg{
+      margin-top:14px;
+      padding:14px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(255,255,255,.7);
+      display:none;
+      font-size:16px;
+      line-height:1.6;
+      text-align:left;
+    }
+    .msg.show{ display:block; }
+
+    .actions{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .small{
+      font-size:13px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow:none;
+    }
+
+    /* confetti */
+    .confetti {
+      position:absolute;
+      width:8px;
+      height:12px;
+      top:-20px;
+      left:0;
+      opacity:.9;
+      animation: fall linear forwards;
+      pointer-events:none;
+    }
+    @keyframes fall{
+      to{ transform: translateY(120vh) rotate(720deg); opacity:0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="top">
+      <span class="badge">🌹 Rose Day</span>
+      <span class="badge">💌 Propose Day</span>
+    </div>
+
+    <h1>Hi Taniya</h1>
+    <p class="sub">
+      Just something small and simple -- a rose for today,<br/>
+      miss you. 🥺
+    </p>
+
+    <div class="stage" id="stage">
+      <div class="question">Will you be my Valentine?</div>
+
+      <div class="btn-row" id="btnRow">
+        <button id="yesBtn">Yes</button>
+        <button id="noBtn">No</button>
+      </div>
+
+      <div class="hint" id="hint">Tip: try clicking "No"… if you can 🙂</div>
+
+      <div class="msg" id="messageBox"></div>
+
+      <div class="actions">
+        <button class="small" id="resetBtn" type="button">Reset</button>
+        <button class="small" id="copyBtn" type="button">👀</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Subtle floating icons
+    const floatEmojis = ["💗","💕","❤️","🌹","✨"];
+    function spawnFloat(){
+      const el = document.createElement("div");
+      el.className = "float";
+      el.textContent = floatEmojis[Math.floor(Math.random()*floatEmojis.length)];
+      el.style.left = (Math.random()*100) + "vw";
+      el.style.setProperty("--drift", (Math.random()*120 - 60) + "px");
+      el.style.animationDuration = (Math.random()*3 + 4) + "s";
+      el.style.fontSize = (Math.random()*10 + 14) + "px";
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 8000);
+    }
+    setInterval(spawnFloat, 350);
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const btnRow = document.getElementById("btnRow");
+    const stage  = document.getElementById("stage");
+    const messageBox = document.getElementById("messageBox");
+    const hint = document.getElementById("hint");
+    const resetBtn = document.getElementById("resetBtn");
+    const copyBtn = document.getElementById("copyBtn");
+
+    let noCount = 0;
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    // Place NO button at random position inside the row (keeps it visible)
+    function moveNoButton(reason){
+      const pad = 8;
+
+      const rowRect = btnRow.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxX = rowRect.width  - btnRect.width  - pad;
+      const maxY = rowRect.height - btnRect.height - pad;
+
+      const x = pad + Math.random() * Math.max(maxX, 1);
+      const y = pad + Math.random() * Math.max(maxY, 1);
+
+      // Make it feel "interactive": slight speed-up as attempts increase
+      const dur = clamp(140 - noCount*12, 60, 140);
+
+      noBtn.style.transition = `left ${dur}ms ease, top ${dur}ms ease, transform 120ms ease`;
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.transform = "translate(0,0)";
+
+      noCount++;
+      messageBox.classList.add("show");
+
+      const lines = [
+        "Try again 🙂",
+        "Not that one 😄",
+        "Nice try -- but nope.",
+        "Okay, you're persistent 😅",
+        "At this point… just press Yes 😌"
+      ];
+      const line = lines[Math.min(noCount-1, lines.length-1)];
+      messageBox.innerHTML = `<b>${line}</b>`;
+    }
+
+    // Initialize absolute positioning within btnRow
+    function initButtons(){
+      // Ensure yes is fixed, no starts somewhere clickable
+      noBtn.style.left = "65%";
+      noBtn.style.top = "50%";
+      noBtn.style.transform = "translate(-50%, -50%)";
+      noBtn.style.position = "absolute";
+      yesBtn.style.position = "absolute";
+
+      messageBox.classList.remove("show");
+      messageBox.innerHTML = "";
+      hint.textContent = 'Tip: try clicking "No"… if you can 🙂';
+      noBtn.style.display = "inline-block";
+      yesBtn.textContent = "Yes";
+      noCount = 0;
+    }
+
+    initButtons();
+
+    // Make NO button dodge when cursor gets close (more interactive than only hover)
+    function dodgeIfClose(e){
+      const rect = noBtn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      // Trigger dodge within ~90px (feels interactive)
+      if(dist < 90){
+        moveNoButton("proximity");
+      }
+    }
+
+    document.addEventListener("mousemove", dodgeIfClose);
+
+    // Also dodge on touch
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoButton("touch");
+    }, {passive:false});
+
+    // Clicking NO triggers move + message
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNoButton("click");
+    });
+
+    // Confetti for YES
+    function confettiBurst(){
+      for(let i=0;i<80;i++){
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = (Math.random()*100) + "vw";
+        c.style.animationDuration = (Math.random()*1.2 + 1.6) + "s";
+        c.style.transform = `translateY(0) rotate(${Math.random()*360}deg)`;
+        // random pastel-ish via hsl (no hardcoded cringe colors)
+        const hue = Math.floor(Math.random()*360);
+        c.style.background = `hsl(${hue} 80% 70%)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 4000);
+      }
+    }
+
+    const sweetMessage =
+`Taniya,
+Happy Rose Day and Propose Day.
+I like you, and I'd really like you to be my Valentine.
+No pressure but 🥺.`;
+
+    yesBtn.addEventListener("click", () => {
+      confettiBurst();
+      messageBox.classList.add("show");
+      messageBox.innerHTML = `
+        <b>Perfect 🙂</b><br/><br/>
+        <div style="white-space:pre-line">${sweetMessage}</div>
+      `;
+      hint.textContent = "Locked in ✅";
+      noBtn.style.display = "none";
+      yesBtn.textContent = "Yes ✅";
+    });
+
+    resetBtn.addEventListener("click", () => {
+      initButtons();
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(sweetMessage);
+        messageBox.classList.add("show");
+        messageBox.innerHTML = "<b>Copied.</b> You can paste it anywhere 🙂";
+      }catch{
+        messageBox.classList.add("show");
+        messageBox.innerHTML = "<b>Copy didn't work here.</b> (Some browsers block it.) You can manually select the text after pressing Yes.";
+      }
+    });
+  </script>
+</body>
+</html>
